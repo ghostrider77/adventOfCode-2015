@@ -62,14 +62,12 @@ let get_cheapest_win (player : character) (boss : character) : int =
     | Some ({player = {hit_point = hp_p; _}; boss = {hit_point = hp_b; _}; mana_spent; _} as state) ->
         if hp_p <= 0 then loop minimum_mana_spent
         else if hp_b <= 0 then loop (min mana_spent minimum_mana_spent)
-        else match play_one_turn state with
-          | [] -> loop minimum_mana_spent
-          | next_states ->
-              next_states
-                |> List.filter (fun {mana_spent; _} -> mana_spent < minimum_mana_spent)
-                |> List.to_seq
-                |> Queue.add_seq queue;
-              loop minimum_mana_spent
+        else
+          (play_one_turn state
+            |> List.filter (fun {mana_spent; _} -> mana_spent < minimum_mana_spent)
+            |> List.to_seq
+            |> Queue.add_seq queue;
+          loop minimum_mana_spent)
   in loop max_int
 
 

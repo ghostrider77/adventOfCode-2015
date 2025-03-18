@@ -2,7 +2,7 @@ let generate_next (n : int) : int =
   (n * 252533) mod 33554393
 
 
-let identifiy_code (row : int) (column : int) : int =
+let identify_code (row : int) (column : int) : int =
   let diagonal = row + column - 1 in
   column + (diagonal - 1) * diagonal / 2
 
@@ -12,7 +12,7 @@ let read_input (line : string) : int * int =
 
 
 let calc_code (row : int) (column : int) : int =
-  let n = identifiy_code row column in
+  let n = identify_code row column in
   let rec loop code k =
     if k = n then code
     else loop (generate_next code) (k + 1)

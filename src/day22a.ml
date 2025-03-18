@@ -63,7 +63,8 @@ let get_cheapest_win (player : character) (boss : character) : int =
         if hp_p <= 0 then loop minimum_mana_spent
         else if hp_b <= 0 then loop (min mana_spent minimum_mana_spent)
         else
-          (play_one_turn state
+          (state
+            |> play_one_turn
             |> List.filter (fun {mana_spent; _} -> mana_spent < minimum_mana_spent)
             |> List.to_seq
             |> Queue.add_seq queue;

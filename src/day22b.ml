@@ -40,17 +40,14 @@ let play_one_turn ({turn; player; boss; active_spells; mana_spent} as state : st
     else if turn mod 2 = 0 then
       let is_spell_available {name; cost; _} =
         cost <= player'.mana && List.for_all (fun sp -> sp.name <> name) remaining_spells in
-      match List.filter is_spell_available all_spells with
-        | [] -> []
-        | available_spells ->
-            let cast_spell ({cost; _} as sp) =
-              { turn = turn + 1
-              ; player = {player' with mana = player'.mana - cost; armor = 0}
-              ; boss = boss'
-              ; active_spells = sp :: remaining_spells
-              ; mana_spent = mana_spent + cost
-              } in
-            List.map cast_spell available_spells
+      let cast_spell ({cost; _} as sp) =
+        { turn = turn + 1
+        ; player = {player' with mana = player'.mana - cost; armor = 0}
+        ; boss = boss'
+        ; active_spells = sp :: remaining_spells
+        ; mana_spent = mana_spent + cost
+        } in
+      List.filter_map (fun sp -> if is_spell_available sp then Some (cast_spell sp) else None) all_spells
     else
       let damage_by_boss = max (boss'.damage - player'.armor) 1 in
       let player' = {player' with hit_point = player'.hit_point - damage_by_boss; armor = 0} in
